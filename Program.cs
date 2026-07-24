@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TodoApi.Infrastructure.Data;
+using TodoApi.Domain.Interfaces;
+using TodoApi.Infrastructure.Repositories;
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 // Add services to the container.
@@ -15,7 +18,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
