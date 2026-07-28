@@ -1,0 +1,17 @@
+<div class="auth-container">
+    <h2>Kayıt Ol</h2>
+    <form (ngSubmit)="submit()" #f="ngForm">
+      <input type="email" name="email" [(ngModel)]="email" placeholder="E-posta" required />
+      <input type="password" name="password" [(ngModel)]="password" placeholder="Şifre (en az 6 karakter, 1 büyük harf, 1 sayı, 1 özel karakter)" required />
+      <button type="submit" [disabled]="loading() || !f.valid">
+        {{ loading() ? 'Kayıt yapılıyor...' : 'Kayıt Ol' }}
+      </button>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+      @if (success()) {
+        <p class="success">Kayıt başarılı! Giriş sayfasına yönlendiriliyorsun...</p>
+      }
+    </form>
+    <p>Hesabın var mı? <a routerLink="/login">Giriş yap</a></p>
+  </div>

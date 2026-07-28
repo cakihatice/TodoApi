@@ -1,0 +1,14 @@
+<div class="auth-container">
+    <h2>Giriş Yap</h2>
+    <form (ngSubmit)="submit()" #f="ngForm">
+      <input type="email" name="email" [(ngModel)]="email" placeholder="E-posta" required />
+      <input type="password" name="password" [(ngModel)]="password" placeholder="Şifre" required />
+      <button type="submit" [disabled]="loading() || !f.valid">
+        {{ loading() ? 'Giriş yapılıyor...' : 'Giriş Yap' }}
+      </button>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+    </form>
+    <p>Hesabın yok mu? <a routerLink="/register">Kayıt ol</a></p>
+  </div>
