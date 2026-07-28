@@ -7,6 +7,12 @@ using System.Text;
 using TodoApi.Infrastructure.Data;
 using TodoApi.Domain.Interfaces;
 using TodoApi.Infrastructure.Repositories;
+using TodoApi.Application.Common;
+using TodoApi.Application.Commands;
+using TodoApi.Application.Queries;
+using TodoApi.Application.CommandHandlers;
+using TodoApi.Application.QueryHandlers;
+using TodoApi.Application.DTOs;
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
@@ -19,6 +25,14 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
+// CQRS Command Handlers
+builder.Services.AddScoped<ICommandHandler<CreateTodoCommand, Guid>, CreateTodoCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateTodoCommand, bool>, UpdateTodoCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteTodoCommand, bool>, DeleteTodoCommandHandler>();
+
+// CQRS Query Handlers
+builder.Services.AddScoped<IQueryHandler<GetAllTodosQuery, List<TodoDto>>, GetAllTodosQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetTodoByIdQuery, TodoDto?>, GetTodoByIdQueryHandler>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
