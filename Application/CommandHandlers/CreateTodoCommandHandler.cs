@@ -20,7 +20,8 @@ public class CreateTodoCommandHandler : ICommandHandler<CreateTodoCommand, Guid>
         {
             Id = Guid.NewGuid(),
             Title = command.Title,
-            Description = command.Description
+            Description = command.Description,
+            DueDate = command.DueDate
         };
 
         await _repo.AddAsync(todo);

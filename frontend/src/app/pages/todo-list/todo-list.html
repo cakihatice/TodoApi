@@ -1,12 +1,16 @@
 <div class="todo-container">
-  <header>
+<header>
+  <div>
+    <p class="welcome">Hoş geldin, {{ auth.getDisplayName() }}</p>
     <h2>Todo'larım</h2>
-    <button (click)="logout()" class="logout-btn">Çıkış Yap</button>
-  </header>
+  </div>
+  <button (click)="logout()" class="logout-btn">Çıkış Yap</button>
+</header>
 
   <form (ngSubmit)="addTodo()" class="add-form">
     <input type="text" [(ngModel)]="newTitle" name="title" placeholder="Başlık" required />
     <input type="text" [(ngModel)]="newDescription" name="description" placeholder="Açıklama (opsiyonel)" />
+    <input type="date" [(ngModel)]="newDueDate" name="dueDate" title="Son tarih (opsiyonel)" />
     <button type="submit">Ekle</button>
   </form>
 
@@ -21,15 +25,33 @@
   <ul class="todo-list">
     @for (todo of todos(); track todo.id) {
       <li [class.completed]="todo.isCompleted">
-        <input type="checkbox" [checked]="todo.isCompleted" (change)="toggleComplete(todo)" />
-        <div class="todo-content">
-          <strong>{{ todo.title }}</strong>
-          @if (todo.description) {
-            <span>{{ todo.description }}</span>
-          }
-        </div>
-        <button (click)="deleteTodo(todo.id)" class="delete-btn">Sil</button>
-      </li>
+  <input type="checkbox" [checked]="todo.isCompleted" (change)="toggleComplete(todo)" [disabled]="editingId() === todo.id" />
+
+  @if (editingId() === todo.id) {
+    <div class="todo-content edit-mode">
+      <input type="text" [(ngModel)]="editTitle" name="editTitle-{{todo.id}}" placeholder="Başlık" />
+      <input type="text" [(ngModel)]="editDescription" name="editDesc-{{todo.id}}" placeholder="Açıklama" />
+      <input type="date" [(ngModel)]="editDueDate" name="editDue-{{todo.id}}" />
+    </div>
+    <button (click)="saveEdit(todo)" class="save-btn">Kaydet</button>
+    <button (click)="cancelEdit()" class="cancel-btn">İptal</button>
+  } @else {
+    <div class="todo-content">
+      <strong>{{ todo.title }}</strong>
+      @if (todo.description) {
+        <span>{{ todo.description }}</span>
+      }
+      <div class="dates">
+        <span class="created">Eklendi: {{ todo.createdAt | date:'dd MMM yyyy' }}</span>
+        @if (todo.dueDate) {
+          <span class="due">Son tarih: {{ todo.dueDate | date:'dd MMM yyyy' }}</span>
+        }
+      </div>
+    </div>
+    <button (click)="startEdit(todo)" class="edit-btn">Düzenle</button>
+    <button (click)="deleteTodo(todo.id)" class="delete-btn">Sil</button>
+  }
+</li>
     } @empty {
       <li class="empty">Henüz todo yok. Yukarıdan ekle.</li>
     }

@@ -1,0 +1,305 @@
+.todo-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 32px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+.welcome {
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+header h2 {
+  color: #333;
+  font-size: 26px;
+}
+
+.logout-btn {
+  padding: 8px 16px;
+  background: transparent;
+  color: #667eea;
+  border: 1px solid #667eea;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: #667eea;
+  color: white;
+}
+
+.add-form {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr auto;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.add-form input {
+  padding: 10px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 0;
+}
+
+.add-form input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.add-form button {
+  padding: 10px 20px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.add-form button:hover {
+  background: #5568d3;
+}
+
+.todo-list {
+  list-style: none;
+}
+
+.todo-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #f9f9fb;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+}
+
+.todo-list li:hover {
+  background: #f0f0f5;
+}
+
+.todo-list li.completed .todo-content strong {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.todo-list input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #667eea;
+  flex-shrink: 0;
+}
+
+.todo-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.todo-content strong {
+  color: #333;
+  font-size: 15px;
+}
+
+.todo-content span {
+  color: #888;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.dates {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.dates .created {
+  color: #888;
+}
+
+.dates .due {
+  color: #e67e22;
+  font-weight: 600;
+}
+
+.edit-mode {
+  gap: 6px;
+}
+
+.edit-mode input {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  width: 100%;
+}
+
+.edit-mode input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.edit-btn,
+.save-btn,
+.cancel-btn,
+.delete-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  border: 1px solid;
+}
+
+.edit-btn {
+  background: transparent;
+  color: #667eea;
+  border-color: #667eea;
+}
+
+.edit-btn:hover {
+  background: #667eea;
+  color: white;
+}
+
+.delete-btn {
+  background: transparent;
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.delete-btn:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+.save-btn {
+  background: #27ae60;
+  color: white;
+  border-color: #27ae60;
+}
+
+.save-btn:hover {
+  background: #219a52;
+}
+
+.cancel-btn {
+  background: transparent;
+  color: #888;
+  border-color: #ccc;
+}
+
+.cancel-btn:hover {
+  background: #eee;
+}
+
+.empty {
+  text-align: center;
+  color: #999;
+  padding: 24px;
+  background: transparent !important;
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .todo-container {
+    margin: 20px auto;
+    padding: 20px;
+  }
+
+  .add-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .add-form input[type="date"] {
+    grid-column: 1 / 2;
+  }
+
+  .add-form button {
+    grid-column: 2 / 3;
+  }
+
+  header h2 {
+    font-size: 22px;
+  }
+}
+
+/* Mobil */
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+
+  .todo-container {
+    padding: 16px;
+    margin: 10px auto;
+  }
+
+  header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .add-form {
+    grid-template-columns: 1fr;
+  }
+
+  .add-form input[type="date"],
+  .add-form button {
+    grid-column: 1;
+  }
+
+  .todo-list li {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .todo-content {
+    flex: 1 1 100%;
+    order: 2;
+  }
+
+  .todo-list input[type="checkbox"] {
+    order: 1;
+  }
+
+  .edit-btn,
+  .delete-btn,
+  .save-btn,
+  .cancel-btn {
+    flex: 1;
+    padding: 8px;
+  }
+
+  .dates {
+    font-size: 11px;
+  }
+}

@@ -5,5 +5,6 @@ public record TodoDto(
     string Title,
     string? Description,
     bool IsCompleted,
-    DateTime CreatedAt
+    DateTime CreatedAt,
+    DateTime? DueDate
 );

@@ -13,6 +13,7 @@ using TodoApi.Application.Queries;
 using TodoApi.Application.CommandHandlers;
 using TodoApi.Application.QueryHandlers;
 using TodoApi.Application.DTOs;
+using TodoApi.Domain.Entities;
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
@@ -42,7 +43,7 @@ builder.Services.AddScoped<ICommandHandler<DeleteTodoCommand, bool>, DeleteTodoC
 // CQRS Query Handlers
 builder.Services.AddScoped<IQueryHandler<GetAllTodosQuery, List<TodoDto>>, GetAllTodosQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<GetTodoByIdQuery, TodoDto?>, GetTodoByIdQueryHandler>();
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 

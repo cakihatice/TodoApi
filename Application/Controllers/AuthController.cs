@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TodoApi.Application.DTOs;
+using TodoApi.Domain.Entities;
 
 namespace TodoApi.Application.Controllers
 {
@@ -13,10 +14,10 @@ namespace TodoApi.Application.Controllers
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration)
+        public AuthController(UserManager<AppUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _configuration = configuration;
@@ -25,7 +26,12 @@ namespace TodoApi.Application.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto dto)
         {
-            var user = new IdentityUser { UserName = dto.Email, Email = dto.Email };
+            var user = new AppUser
+            {
+                UserName = dto.Email,
+                Email = dto.Email,
+                DisplayName = dto.DisplayName
+            };
             var result = await _userManager.CreateAsync(user, dto.Password);
 
             if (!result.Succeeded)
@@ -46,10 +52,10 @@ namespace TodoApi.Application.Controllers
             }
 
             var token = GenerateJwtToken(user);
-            return Ok(new { token });
+            return Ok(new { token, displayName = user.DisplayName });
         }
 
-        private string GenerateJwtToken(IdentityUser user)
+        private string GenerateJwtToken(AppUser user)
         {
             var claims = new[]
             {

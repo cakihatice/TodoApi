@@ -19,7 +19,7 @@ public class GetAllTodosQueryHandler : IQueryHandler<GetAllTodosQuery, List<Todo
         var todos = await _repo.GetAllAsync();
 
         return todos
-            .Select(t => new TodoDto(t.Id, t.Title, t.Description, t.IsCompleted, t.CreatedAt))
+            .Select(t => new TodoDto(t.Id, t.Title, t.Description, t.IsCompleted, t.CreatedAt,t.DueDate))
             .ToList();
     }
 }

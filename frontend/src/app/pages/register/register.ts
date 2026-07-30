@@ -7,12 +7,13 @@ import { Auth } from '../../services/auth';
   selector: 'app-register',
   imports: [FormsModule, RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.css'
+  styleUrl: './register.scss'
 })
 export class Register {
   private auth = inject(Auth);
   private router = inject(Router);
 
+  displayName = ''
   email = '';
   password = '';
   error = signal<string | null>(null);
@@ -22,7 +23,7 @@ export class Register {
   submit() {
     this.error.set(null);
     this.loading.set(true);
-    this.auth.register(this.email, this.password).subscribe({
+    this.auth.register(this.displayName,this.email, this.password).subscribe({
       next: () => {
         this.loading.set(false);
         this.success.set(true);

@@ -21,6 +21,7 @@ public class UpdateTodoCommandHandler : ICommandHandler<UpdateTodoCommand, bool>
         todo.Title = command.Title;
         todo.Description = command.Description;
         todo.IsCompleted = command.IsCompleted;
+        todo.DueDate = command.DueDate;
 
         _repo.Update(todo);
         return await _repo.SaveChangesAsync();

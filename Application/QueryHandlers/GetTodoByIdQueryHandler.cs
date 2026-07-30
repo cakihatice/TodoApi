@@ -19,6 +19,6 @@ public class GetTodoByIdQueryHandler : IQueryHandler<GetTodoByIdQuery, TodoDto?>
         var todo = await _repo.GetByIdAsync(query.Id);
         if (todo is null) return null;
 
-        return new TodoDto(todo.Id, todo.Title, todo.Description, todo.IsCompleted, todo.CreatedAt);
+        return new TodoDto(todo.Id, todo.Title, todo.Description, todo.IsCompleted, todo.CreatedAt, todo.DueDate);
     }
 }

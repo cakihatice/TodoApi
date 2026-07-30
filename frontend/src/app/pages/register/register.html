@@ -1,6 +1,7 @@
 <div class="auth-container">
     <h2>Kayıt Ol</h2>
     <form (ngSubmit)="submit()" #f="ngForm">
+      <input type="text" name="displayName" [(ngModel)]="displayName" placeholder="Kullanıcı adı" required />
       <input type="email" name="email" [(ngModel)]="email" placeholder="E-posta" required />
       <input type="password" name="password" [(ngModel)]="password" placeholder="Şifre (en az 6 karakter, 1 büyük harf, 1 sayı, 1 özel karakter)" required />
       <button type="submit" [disabled]="loading() || !f.valid">

@@ -9,11 +9,13 @@ export interface TodoDto {
   description: string | null;
   isCompleted: boolean;
   createdAt: string;
+  dueDate: string | null;
 }
 
 export interface CreateTodoRequest {
   title: string;
   description: string | null;
+  dueDate: string | null;
 }
 
 export interface UpdateTodoRequest {
@@ -21,6 +23,7 @@ export interface UpdateTodoRequest {
   title: string;
   description: string | null;
   isCompleted: boolean;
+  dueDate: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
