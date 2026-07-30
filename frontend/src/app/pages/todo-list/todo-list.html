@@ -1,0 +1,37 @@
+<div class="todo-container">
+  <header>
+    <h2>Todo'larım</h2>
+    <button (click)="logout()" class="logout-btn">Çıkış Yap</button>
+  </header>
+
+  <form (ngSubmit)="addTodo()" class="add-form">
+    <input type="text" [(ngModel)]="newTitle" name="title" placeholder="Başlık" required />
+    <input type="text" [(ngModel)]="newDescription" name="description" placeholder="Açıklama (opsiyonel)" />
+    <button type="submit">Ekle</button>
+  </form>
+
+  @if (loading()) {
+    <p>Yükleniyor...</p>
+  }
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <ul class="todo-list">
+    @for (todo of todos(); track todo.id) {
+      <li [class.completed]="todo.isCompleted">
+        <input type="checkbox" [checked]="todo.isCompleted" (change)="toggleComplete(todo)" />
+        <div class="todo-content">
+          <strong>{{ todo.title }}</strong>
+          @if (todo.description) {
+            <span>{{ todo.description }}</span>
+          }
+        </div>
+        <button (click)="deleteTodo(todo.id)" class="delete-btn">Sil</button>
+      </li>
+    } @empty {
+      <li class="empty">Henüz todo yok. Yukarıdan ekle.</li>
+    }
+  </ul>
+</div>
