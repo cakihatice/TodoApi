@@ -6,7 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Todo, TodoDto } from '../../services/todo';
 import { Header } from '../../components/header/header';
 import { TodoDialog } from '../../components/todo-dialog/todo-dialog';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDialog } from '../../components/confirm-dialog/confirm-dialog';
 @Component({
   selector: 'app-todo-list',
   imports: [DatePipe, MatIconModule, MatButtonModule, Header],
@@ -16,6 +17,7 @@ import { TodoDialog } from '../../components/todo-dialog/todo-dialog';
 export class TodoList implements OnInit {
   private todoService = inject(Todo);
   private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
 
   todos = signal<TodoDto[]>([]);
   loading = signal(false);
@@ -64,7 +66,39 @@ export class TodoList implements OnInit {
     }).subscribe(() => this.loadTodos());
   }
 
-  deleteTodo(id: string) {
-    this.todoService.delete(id).subscribe(() => this.loadTodos());
+  deletingIds = signal<Set<string>>(new Set());
+
+deleteTodo(id: string) {
+    if (this.deletingIds().has(id)) return;
+
+    const ref = this.dialog.open(ConfirmDialog, {
+      data: { message: 'Bu todo silinsin mi?' },
+      width: '360px'
+    });
+
+    ref.afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+
+      this.deletingIds.update(s => new Set(s).add(id));
+      this.todoService.delete(id).subscribe({
+        next: () => {
+          this.clearDeleting(id);
+          this.snackBar.open('Todo silindi.', 'Tamam', { duration: 3000 });
+          this.loadTodos();
+        },
+        error: () => {
+          this.clearDeleting(id);
+          this.snackBar.open('Todo silinemedi.', 'Tamam', { duration: 3000 });
+        }
+      });
+    });
+  }
+
+  private clearDeleting(id: string) {
+    this.deletingIds.update(s => {
+      const next = new Set(s);
+      next.delete(id);
+      return next;
+    });
   }
 }

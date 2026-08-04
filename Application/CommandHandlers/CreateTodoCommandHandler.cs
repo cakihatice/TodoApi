@@ -16,12 +16,20 @@ public class CreateTodoCommandHandler : ICommandHandler<CreateTodoCommand, Guid>
 
     public async Task<Guid> Handle(CreateTodoCommand command)
     {
+        // Aynı istek tekrar geldiyse yeni kayıt açma, mevcudu döndür
+        if (command.RequestId.HasValue)
+        {
+            var existing = await _repo.GetByRequestIdAsync(command.RequestId.Value);
+            if (existing is not null) return existing.Id;
+        }
+
         var todo = new TodoItem
         {
             Id = Guid.NewGuid(),
             Title = command.Title,
             Description = command.Description,
-            DueDate = command.DueDate
+            DueDate = command.DueDate,
+            RequestId = command.RequestId
         };
 
         await _repo.AddAsync(todo);

@@ -1,5 +1,7 @@
 <mat-toolbar color="primary" class="app-header">
-  <span class="logo" (click)="goHome()">Do'ty</span>
+  <span class="logo" (click)="goHome()">
+    <app-logo [width]="150" [animate]="true"></app-logo>
+  </span>
   <span class="spacer"></span>
   <span class="display-name">{{ displayName }}</span>
   <button mat-icon-button (click)="openProfile()" aria-label="Profil">

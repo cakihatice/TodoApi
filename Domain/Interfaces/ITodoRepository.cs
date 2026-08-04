@@ -10,4 +10,5 @@ public interface ITodoRepository
     void Update(TodoItem item);
     void Delete(TodoItem item);
     Task<bool> SaveChangesAsync();
+    Task<TodoItem?> GetByRequestIdAsync(Guid requestId);
 }

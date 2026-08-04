@@ -16,6 +16,7 @@ export interface CreateTodoRequest {
   title: string;
   description: string | null;
   dueDate: string | null;
+  requestId: string;
 }
 
 export interface UpdateTodoRequest {

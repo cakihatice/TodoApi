@@ -1,8 +1,11 @@
-<div class="auth-container">
+<div class="auth-page">
+  <app-logo [width]="220" variant="white" class="auth-logo"></app-logo>
+
+  <div class="auth-container">
     <h2>Giriş Yap</h2>
     <form (ngSubmit)="submit()" #f="ngForm">
-      <input type="email" name="email" [(ngModel)]="email" placeholder="E-posta" required />
-      <input type="password" name="password" [(ngModel)]="password" placeholder="Şifre" required />
+      <input type="email" name="email" [(ngModel)]="email" placeholder="E-posta" required autocomplete="email" />
+      <input type="password" name="password" [(ngModel)]="password" placeholder="Şifre" required autocomplete="current-password" />
       <button type="submit" [disabled]="loading() || !f.valid">
         {{ loading() ? 'Giriş yapılıyor...' : 'Giriş Yap' }}
       </button>
@@ -12,3 +15,4 @@
     </form>
     <p>Hesabın yok mu? <a routerLink="/register">Kayıt ol</a></p>
   </div>
+</div>

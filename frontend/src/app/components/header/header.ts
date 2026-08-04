@@ -6,11 +6,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Auth } from '../../services/auth';
 import { ProfileDialog } from '../profile-dialog/profile-dialog';
-
+import { Logo } from '../logo/logo';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatToolbarModule, MatIconModule, MatButtonModule],
+  imports: [MatToolbarModule, MatIconModule, MatButtonModule, Logo],
   templateUrl: './header.html',
   styleUrl: './header.scss'
 })

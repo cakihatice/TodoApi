@@ -1,9 +1,10 @@
 <div class="auth-container">
+  <app-logo [width]="200" class="auth-logo"></app-logo>
     <h2>Kayıt Ol</h2>
     <form (ngSubmit)="submit()" #f="ngForm">
-      <input type="text" name="displayName" [(ngModel)]="displayName" placeholder="Kullanıcı adı" required />
-      <input type="email" name="email" [(ngModel)]="email" placeholder="E-posta" required />
-      <input type="password" name="password" [(ngModel)]="password" placeholder="Şifre (en az 6 karakter, 1 büyük harf, 1 sayı, 1 özel karakter)" required />
+      <input type="text" name="displayName" [(ngModel)]="displayName" placeholder="Kullanıcı adı" required autocomplete="username" />
+      <input type="email" name="email" [(ngModel)]="email" placeholder="E-posta" required autocomplete="email" />
+      <input type="password" name="password" [(ngModel)]="password" placeholder="Şifre (en az 6 karakter, 1 büyük harf, 1 sayı, 1 özel karakter)" required autocomplete="new-password" />
       <button type="submit" [disabled]="loading() || !f.valid">
         {{ loading() ? 'Kayıt yapılıyor...' : 'Kayıt Ol' }}
       </button>

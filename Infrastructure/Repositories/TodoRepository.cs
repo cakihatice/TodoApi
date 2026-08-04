@@ -25,6 +25,12 @@ public class TodoRepository : ITodoRepository
     {
         return await _context.Todos.FindAsync(id);
     }
+    public async Task<TodoItem?> GetByRequestIdAsync(Guid requestId)
+    {
+        return await _context.Todos
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.RequestId == requestId);
+    }
 
     public async Task AddAsync(TodoItem item)
     {

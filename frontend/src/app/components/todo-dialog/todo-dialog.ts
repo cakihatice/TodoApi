@@ -49,8 +49,9 @@ export class TodoDialog {
     const d = String(date.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
   }
+  private requestId = crypto.randomUUID();
 
-  save(): void {
+save(): void {
     if (!this.title.trim() || this.saving()) return;
     this.saving.set(true);
 
@@ -65,7 +66,8 @@ export class TodoDialog {
       : this.todoService.create({
           title: this.title,
           description: this.description || null,
-          dueDate: this.toIsoDate(this.dueDate)
+          dueDate: this.toIsoDate(this.dueDate),
+          requestId: this.requestId
         });
 
     request$.subscribe({

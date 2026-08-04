@@ -1,0 +1,10 @@
+:host {
+  display: block;
+  min-width: 320px;
+}
+
+@media (max-width: 480px) {
+  :host {
+    min-width: unset;
+  }
+}

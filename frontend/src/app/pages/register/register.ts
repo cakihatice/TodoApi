@@ -2,10 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
+import { Logo } from '../../components/logo/logo';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, Logo],
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
@@ -20,16 +21,21 @@ export class Register {
   success = signal(false);
   loading = signal(false);
 
-  submit() {
+submit() {
+    if (this.loading()) return;          // çift tıklama kilidi
     this.error.set(null);
     this.loading.set(true);
-    this.auth.register(this.displayName,this.email, this.password).subscribe({
+
+    const password = this.password;
+    this.password = '';                   // şifreyi hemen bellekten temizle
+
+    this.auth.register(this.displayName, this.email, password).subscribe({
       next: () => {
         this.loading.set(false);
         this.success.set(true);
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },
-      error: (err) => {
+      error: () => {
         this.loading.set(false);
         this.error.set('Kayıt başarısız. E-posta zaten var olabilir veya şifre kurallarına uymuyor.');
       }
