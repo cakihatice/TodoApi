@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Todo Düzenle' : 'Yeni Todo' }}</h2>
+
+<mat-dialog-content class="dialog-form">
+  <mat-form-field appearance="outline">
+    <mat-label>Başlık</mat-label>
+    <input matInput [(ngModel)]="title" name="title" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Açıklama (opsiyonel)</mat-label>
+    <input matInput [(ngModel)]="description" name="description" />
+  </mat-form-field>
+
+<mat-form-field appearance="outline">
+    <mat-label>Son tarih (opsiyonel)</mat-label>
+    <input matInput [matDatepicker]="picker" [(ngModel)]="dueDate" name="dueDate" readonly (click)="picker.open()" />
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="saving()">İptal</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="saving() || !title.trim()">
+    {{ saving() ? 'Kaydediliyor...' : 'Kaydet' }}
+  </button>
+</mat-dialog-actions>

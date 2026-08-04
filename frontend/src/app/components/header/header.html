@@ -1,0 +1,11 @@
+<mat-toolbar color="primary" class="app-header">
+  <span class="logo" (click)="goHome()">Do'ty</span>
+  <span class="spacer"></span>
+  <span class="display-name">{{ displayName }}</span>
+  <button mat-icon-button (click)="openProfile()" aria-label="Profil">
+    <div class="avatar">{{ initial }}</div>
+  </button>
+  <button mat-icon-button (click)="logout()" aria-label="Çıkış yap">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>

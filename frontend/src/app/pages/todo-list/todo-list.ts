@@ -1,32 +1,25 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { Todo, TodoDto } from '../../services/todo';
-import { Auth } from '../../services/auth';
+import { Header } from '../../components/header/header';
+import { TodoDialog } from '../../components/todo-dialog/todo-dialog';
 
 @Component({
   selector: 'app-todo-list',
-  imports: [FormsModule, DatePipe],
+  imports: [DatePipe, MatIconModule, MatButtonModule, Header],
   templateUrl: './todo-list.html',
   styleUrl: './todo-list.scss'
 })
 export class TodoList implements OnInit {
   private todoService = inject(Todo);
-  auth = inject(Auth);
-  private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   todos = signal<TodoDto[]>([]);
-  newTitle = '';
-  newDescription = '';
-  newDueDate = '';
   loading = signal(false);
   error = signal<string | null>(null);
-
-  editingId = signal<string | null>(null);
-  editTitle = '';
-  editDescription = '';
-  editDueDate = '';
 
   ngOnInit() {
     this.loadTodos();
@@ -37,6 +30,7 @@ export class TodoList implements OnInit {
     this.todoService.getAll().subscribe({
       next: (todos) => {
         this.todos.set(todos);
+        this.error.set(null);
         this.loading.set(false);
       },
       error: () => {
@@ -46,17 +40,17 @@ export class TodoList implements OnInit {
     });
   }
 
-  addTodo() {
-    if (!this.newTitle.trim()) return;
-    this.todoService.create({
-      title: this.newTitle,
-      description: this.newDescription || null,
-      dueDate: this.newDueDate || null
-    }).subscribe(() => {
-      this.newTitle = '';
-      this.newDescription = '';
-      this.newDueDate = '';
-      this.loadTodos();
+  openAddDialog() {
+    const ref = this.dialog.open(TodoDialog, { data: {}, width: '420px' });
+    ref.afterClosed().subscribe(saved => {
+      if (saved) this.loadTodos();
+    });
+  }
+
+  openEditDialog(todo: TodoDto) {
+    const ref = this.dialog.open(TodoDialog, { data: { todo }, width: '420px' });
+    ref.afterClosed().subscribe(saved => {
+      if (saved) this.loadTodos();
     });
   }
 
@@ -72,35 +66,5 @@ export class TodoList implements OnInit {
 
   deleteTodo(id: string) {
     this.todoService.delete(id).subscribe(() => this.loadTodos());
-  }
-
-  startEdit(todo: TodoDto) {
-    this.editingId.set(todo.id);
-    this.editTitle = todo.title;
-    this.editDescription = todo.description || '';
-    this.editDueDate = todo.dueDate ? todo.dueDate.substring(0, 10) : '';
-  }
-
-  saveEdit(todo: TodoDto) {
-    if (!this.editTitle.trim()) return;
-    this.todoService.update({
-      id: todo.id,
-      title: this.editTitle,
-      description: this.editDescription || null,
-      isCompleted: todo.isCompleted,
-      dueDate: this.editDueDate || null
-    }).subscribe(() => {
-      this.editingId.set(null);
-      this.loadTodos();
-    });
-  }
-
-  cancelEdit() {
-    this.editingId.set(null);
-  }
-
-  logout() {
-    this.auth.logout();
-    this.router.navigate(['/login']);
   }
 }

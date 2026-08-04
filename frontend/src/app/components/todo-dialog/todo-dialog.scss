@@ -1,0 +1,12 @@
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  min-width: 360px;
+}
+
+@media (max-width: 480px) {
+  .dialog-form {
+    min-width: unset;
+  }
+}
