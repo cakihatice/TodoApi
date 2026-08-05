@@ -1,8 +1,49 @@
 <h2 mat-dialog-title>Profil</h2>
-<mat-dialog-content>
-  <p><strong>Kullanıcı adı:</strong> {{ displayName }}</p>
-  <p class="note">Fotoğraf, e-posta ve şifre güncelleme özellikleri yakında eklenecek.</p>
+
+<mat-dialog-content class="profile-form">
+  @if (loading()) {
+    <p>Yükleniyor...</p>
+  } @else {
+    <div class="photo-section">
+      @if (photoBase64()) {
+        <img [src]="photoBase64()" alt="Profil fotoğrafı" class="avatar-img" />
+      } @else {
+        <div class="avatar-placeholder">{{ displayName.charAt(0).toUpperCase() }}</div>
+      }
+      <button mat-stroked-button type="button" (click)="fileInput.click()">
+        <mat-icon>photo_camera</mat-icon> Fotoğraf Yükle
+      </button>
+      <input #fileInput type="file" accept="image/*" hidden (change)="onFileSelected($event)" />
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Kullanıcı adı</mat-label>
+      <input matInput [value]="displayName" readonly />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>E-posta</mat-label>
+      <input matInput type="email" [(ngModel)]="email" name="email" />
+      @if (!emailConfirmed()) {
+        <mat-hint>E-posta henüz doğrulanmadı</mat-hint>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Mevcut şifre (şifre değiştirmek için)</mat-label>
+      <input matInput type="password" [(ngModel)]="currentPassword" name="currentPassword" autocomplete="current-password" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Yeni şifre (opsiyonel)</mat-label>
+      <input matInput type="password" [(ngModel)]="newPassword" name="newPassword" autocomplete="new-password" />
+    </mat-form-field>
+  }
 </mat-dialog-content>
+
 <mat-dialog-actions align="end">
-  <button mat-button (click)="close()">Kapat</button>
+  <button mat-button (click)="close()" [disabled]="saving()">İptal</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="loading() || saving()">
+    {{ saving() ? 'Kaydediliyor...' : 'Kaydet' }}
+  </button>
 </mat-dialog-actions>

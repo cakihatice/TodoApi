@@ -14,6 +14,8 @@ using TodoApi.Application.CommandHandlers;
 using TodoApi.Application.QueryHandlers;
 using TodoApi.Application.DTOs;
 using TodoApi.Domain.Entities;
+using TodoApi.Infrastructure.Email;
+
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
@@ -35,6 +37,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
+builder.Services.AddScoped<IEmailSender, LoggingEmailSender>();
 // CQRS Command Handlers
 builder.Services.AddScoped<ICommandHandler<CreateTodoCommand, Guid>, CreateTodoCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateTodoCommand, bool>, UpdateTodoCommandHandler>();

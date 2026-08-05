@@ -7,6 +7,19 @@ interface LoginResponse {
   token: string;
   displayName: string;
 }
+export interface ProfileResponse {
+  displayName: string;
+  email: string;
+  photoBase64: string | null;
+  emailConfirmed: boolean;
+}
+
+export interface UpdateProfileRequest {
+  email: string;
+  photoBase64: string | null;
+  newPassword: string | null;
+  currentPassword: string | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class Auth {
@@ -42,5 +55,12 @@ export class Auth {
 
   getDisplayName(): string | null {
     return localStorage.getItem(this.displayNameKey);
+  }
+  getProfile(): Observable<ProfileResponse> {
+  return this.http.get<ProfileResponse>(`${this.apiUrl}/me`);
+  }
+
+  updateProfile(data: UpdateProfileRequest): Observable<any> {
+  return this.http.put(`${this.apiUrl}/profile`, data);
   }
 }

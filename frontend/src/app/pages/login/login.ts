@@ -19,19 +19,23 @@ export class Login {
   error = signal<string | null>(null);
   loading = signal(false);
 
-  submit() {
-    if (this.loading()) return;
-    this.error.set(null);
-    this.loading.set(true);
-    this.auth.login(this.email, this.password).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.router.navigate(['/todos']);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.error.set('Giriş başarısız. E-posta veya şifreyi kontrol et.');
-      }
-    });
-  }
+submit() {
+  if (this.loading()) return;
+  this.error.set(null);
+  this.loading.set(true);
+
+  const password = this.password;
+  this.password = '';                    // şifreyi hemen bellekten temizle
+
+  this.auth.login(this.email, password).subscribe({
+    next: () => {
+      this.loading.set(false);
+      this.router.navigate(['/todos']);
+    },
+    error: () => {
+      this.loading.set(false);
+      this.error.set('Giriş başarısız. E-posta veya şifreyi kontrol et.');
+    }
+  });
+}
 }
