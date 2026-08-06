@@ -17,6 +17,7 @@ using TodoApi.Domain.Entities;
 using TodoApi.Infrastructure.Email;
 
 
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 // Add services to the container.
@@ -42,11 +43,20 @@ builder.Services.AddScoped<IEmailSender, LoggingEmailSender>();
 builder.Services.AddScoped<ICommandHandler<CreateTodoCommand, Guid>, CreateTodoCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateTodoCommand, bool>, UpdateTodoCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteTodoCommand, bool>, DeleteTodoCommandHandler>();
-
+builder.Services.AddScoped<IEmailValidator, EmailValidator>();
 // CQRS Query Handlers
 builder.Services.AddScoped<IQueryHandler<GetAllTodosQuery, List<TodoDto>>, GetAllTodosQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<GetTodoByIdQuery, TodoDto?>, GetTodoByIdQueryHandler>();
-builder.Services.AddIdentity<AppUser, IdentityRole>()
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+    // İstemcide SHA-256 hash gönderiliyor; sunucu sadece hash'i görür.
+    // Asıl şifre gücü register formunda doğrulanıyor.
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 8;
+})
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 

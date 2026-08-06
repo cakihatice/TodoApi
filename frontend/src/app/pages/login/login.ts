@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { Logo } from '../../components/logo/logo';
+import { sha256 } from '../../utils/hash';
 
 @Component({
   selector: 'app-login',
@@ -19,15 +20,15 @@ export class Login {
   error = signal<string | null>(null);
   loading = signal(false);
 
-submit() {
+async submit() {
   if (this.loading()) return;
   this.error.set(null);
   this.loading.set(true);
 
-  const password = this.password;
-  this.password = '';                    // şifreyi hemen bellekten temizle
+  const hashed = await sha256(this.password);
+  this.password = '';
 
-  this.auth.login(this.email, password).subscribe({
+  this.auth.login(this.email, hashed).subscribe({
     next: () => {
       this.loading.set(false);
       this.router.navigate(['/todos']);

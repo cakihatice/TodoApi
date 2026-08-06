@@ -23,6 +23,7 @@ CQRS mimarisiyle yazılmış, JWT kimlik doğrulama, profil yönetimi ve e-posta
 - CQRS pattern (elle yazılmış ICommand/IQuery arayüzleri, MediatR kullanılmadı)
 - Repository pattern (ITodoRepository)
 - IEmailSender soyutlaması (hoşgeldin maili + e-posta doğrulama için)
+- DnsClient (MX kaydı kontrolüyle e-posta alan adı doğrulama)
 
 **Frontend**
 - Angular 22 (standalone components)
@@ -31,6 +32,7 @@ CQRS mimarisiyle yazılmış, JWT kimlik doğrulama, profil yönetimi ve e-posta
 - Angular Signals + FormsModule
 - HttpClient + JWT Interceptor
 - RxJS
+- Web Crypto API (giriş/kayıtta şifreyi SHA-256 ile client-side hash'leme)
 
 ## Klasör Yapısı
 
@@ -46,10 +48,10 @@ TodoApi/
 │   └── DTOs/                # RegisterDto, LoginDto, TodoDto, ProfileDto
 ├── Domain/
 │   ├── Entities/            # TodoItem, AppUser (DisplayName + PhotoBase64)
-│   └── Interfaces/          # ITodoRepository, IEmailSender
+│   └── Interfaces/          # ITodoRepository, IEmailSender, IEmailValidator
 ├── Infrastructure/
 │   ├── Data/                # AppDbContext
-│   ├── Email/               # LoggingEmailSender (sahte/log implementasyon)
+│   ├── Email/               # LoggingEmailSender + EmailValidator (MX kontrolü)
 │   └── Repositories/        # TodoRepository (EF Core)
 ├── Migrations/              # EF Core migrations
 ├── frontend/                # Angular projesi
@@ -164,7 +166,7 @@ Tüm todo ve profil endpoint'leri `Authorization: Bearer <token>` header'ı gere
 { "displayName": "Hatice", "email": "test@test.com", "password": "Test123!" }
 ```
 → `200 OK { "message": "Kullanıcı başarıyla oluşturuldu." }`
-Kullanıcı adı (`displayName`) benzersiz olmalıdır; alınmışsa `400 Bad Request` döner. Başarılı kayıtta hoşgeldin maili + doğrulama linki gönderilir.
+Kullanıcı adı (`displayName`) benzersiz olmalıdır; alınmışsa `400 Bad Request` döner. E-posta hem format (regex) hem de MX kaydı açısından doğrulanır — `test@co.cocooco` gibi mail almayan alan adları reddedilir. `password` alanı istemcide SHA-256 ile hash'lenmiş olarak gelir. Başarılı kayıtta hoşgeldin maili + doğrulama linki gönderilir.
 
 **POST /api/auth/login**
 ```json
@@ -244,11 +246,12 @@ curl -X GET http://localhost:5158/api/todo \
 - JWT tabanlı kimlik doğrulama — register/login endpoint'leri + Angular tarafında interceptor
 - Benzersiz kullanıcı adı (DisplayName) kontrolü
 - E-posta doğrulama sistemi (ASP.NET Identity `EmailConfirmed` + confirm-email endpoint'i)
-- Şifre güvenliği — tüm şifre alanları `type="password"`, şifre istekten hemen sonra bellekten temizlenir, düz metin hiçbir yerde görünmez
+- E-posta alan adı doğrulama — format (regex) + MX kaydı kontrolü (DnsClient); mail almayan/sahte alan adları (`test.com`, `co.cocooco` vb.) reddedilir
+- Şifre güvenliği — çift katmanlı: (1) istemcide SHA-256 hash (ağda/DevTools'ta düz şifre görünmez), (2) sunucuda ASP.NET Identity PBKDF2 + salt (DB'de asla düz şifre yok). Ayrıca tüm şifre alanları `type="password"` ve şifre istekten hemen sonra bellekten temizlenir. Not: client-side hash asıl güvenlik değil, TLS/HTTPS'in tamamlayıcısıdır.
 
 **Profil yönetimi**
 - Ayrı bir profil componenti, header'daki fotoğraf/avatara tıklanınca dialog olarak açılır
-- Base64 fotoğraf yükleme (DB'de string olarak `PhotoBase64` sütununda saklanır), header avatarında gösterilir
+- Base64 fotoğraf yükleme (en fazla 10 MB; DB'de string olarak `PhotoBase64` sütununda saklanır), header avatarında gösterilir
 - E-posta ve şifre güncelleme; kullanıcı adı readonly textbox olarak görünür (değiştirilemez)
 
 **Todo yönetimi**

@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Auth } from '../../services/auth';
+import { sha256 } from '../../utils/hash';
 
 @Component({
   selector: 'app-profile-dialog',
@@ -59,7 +60,7 @@ export class ProfileDialog implements OnInit {
       this.snackBar.open('Lütfen bir resim dosyası seç.', 'Tamam', { duration: 3000 });
       return;
     }
-    if (file.size > 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
       this.snackBar.open('Dosya en fazla 1 MB olabilir.', 'Tamam', { duration: 3000 });
       return;
     }
@@ -69,31 +70,35 @@ export class ProfileDialog implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  save() {
-    if (this.saving()) return;
+async save() {
+  if (this.saving()) return;
 
-    if (this.newPassword && !this.currentPassword) {
-      this.snackBar.open('Şifre değiştirmek için mevcut şifreni gir.', 'Tamam', { duration: 3000 });
-      return;
-    }
-
-    this.saving.set(true);
-    this.auth.updateProfile({
-      email: this.email,
-      photoBase64: this.photoBase64(),
-      newPassword: this.newPassword || null,
-      currentPassword: this.currentPassword || null
-    }).subscribe({
-      next: () => {
-        this.snackBar.open('Profil güncellendi.', 'Tamam', { duration: 3000 });
-        this.dialogRef.close(true);
-      },
-      error: () => {
-        this.saving.set(false);
-        this.snackBar.open('Güncelleme başarısız. Bilgileri kontrol et.', 'Tamam', { duration: 3000 });
-      }
-    });
+  if (this.newPassword && !this.currentPassword) {
+    this.snackBar.open('Şifre değiştirmek için mevcut şifreni gir.', 'Tamam', { duration: 3000 });
+    return;
   }
+
+  this.saving.set(true);
+
+  const currentPassword = this.currentPassword ? await sha256(this.currentPassword) : null;
+  const newPassword = this.newPassword ? await sha256(this.newPassword) : null;
+
+  this.auth.updateProfile({
+    email: this.email,
+    photoBase64: this.photoBase64(),
+    newPassword,
+    currentPassword
+  }).subscribe({
+    next: () => {
+      this.snackBar.open('Profil güncellendi.', 'Tamam', { duration: 3000 });
+      this.dialogRef.close(true);
+    },
+    error: () => {
+      this.saving.set(false);
+      this.snackBar.open('Güncelleme başarısız. Bilgileri kontrol et.', 'Tamam', { duration: 3000 });
+    }
+  });
+}
 
   close() {
     this.dialogRef.close();

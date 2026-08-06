@@ -23,19 +23,26 @@ namespace TodoApi.Application.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IEmailSender _emailSender;
+        private readonly IEmailValidator _emailValidator;
+
         public AuthController(
             UserManager<AppUser> userManager,
             IConfiguration configuration,
-            IEmailSender emailSender)
-            {
-                _userManager = userManager;
-                _configuration = configuration;
-                _emailSender = emailSender;
-            }
-
+            IEmailSender emailSender,
+            IEmailValidator emailValidator)
+        {
+            _userManager = userManager;
+            _configuration = configuration;
+            _emailSender = emailSender;
+            _emailValidator = emailValidator;
+        }
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto dto)
         {
+            if (!await _emailValidator.IsValidAsync(dto.Email))
+    {
+            return BadRequest(new { message = "Geçerli ve var olan bir e-posta adresi girin." });
+    }
             var existing = await _userManager.Users
             .FirstOrDefaultAsync(u => u.DisplayName == dto.DisplayName);
             if (existing != null)
