@@ -41,9 +41,9 @@ TodoApi/
 ├── Application/
 │   ├── Commands/            # Command DTOs (Create/Update/Delete)
 │   ├── CommandHandlers/     # Command iş mantığı
-│   ├── Queries/             # Query DTOs (GetAll/GetById)
+│   ├── Queries/             # Query DTOs (GetAll/GetById/GetTodosPaged)
 │   ├── QueryHandlers/       # Query iş mantığı
-│   ├── Common/              # ICommand, IQuery arayüzleri
+│   ├── Common/              # ICommand, IQuery arayüzleri + PagedResult<T>
 │   ├── Controllers/         # AuthController, TodoController
 │   └── DTOs/                # RegisterDto, LoginDto, TodoDto, ProfileDto
 ├── Domain/
@@ -190,8 +190,20 @@ E-posta doğrulama linki. Başarılıysa kullanıcının `EmailConfirmed` alanı
 
 ### Todo (JWT gerekli)
 
-**GET /api/todo** — tüm todo'ları getir
-→ `200 OK [{ "id": "...", "title": "...", "description": "...", "isCompleted": false, "createdAt": "...", "dueDate": null }]`
+**GET /api/todo?pageNumber={n}&pageSize={m}** — todo'ları sayfalı getir
+`pageNumber` (varsayılan `1`) ve `pageSize` (varsayılan `10`, en fazla `100`) query parametreleriyle sayfalama yapılır. Geçersiz değerler (0, negatif, 100 üstü) sunucuda güvenli varsayılanlara çekilir. Kayıtlar `createdAt` alanına göre azalan sırada döner (sıralama olmadan `Skip/Take` tutarsız sayfa sonuçları üretebileceği için zorunludur). Yanıt, kayıtların yanında toplam sayı ve sayfa navigasyonu için meta bilgiyi de içeren bir `PagedResult` zarfıdır:
+```json
+{
+  "items": [{ "id": "...", "title": "...", "description": "...", "isCompleted": false, "createdAt": "...", "dueDate": null }],
+  "pageNumber": 1,
+  "pageSize": 10,
+  "totalCount": 42,
+  "totalPages": 5,
+  "hasPreviousPage": false,
+  "hasNextPage": true
+}
+```
+`totalPages`, `hasPreviousPage` ve `hasNextPage` sunucuda hesaplanır; frontend bu bilgiyi ileri/geri butonlarını aktif/pasif yapmak için doğrudan kullanır.
 
 **GET /api/todo/{id}** — tek todo getir
 → `200 OK { ... }` ya da `404 Not Found`
@@ -235,8 +247,8 @@ curl -X POST http://localhost:5158/api/todo \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"title":"Süt al","description":null,"dueDate":null,"requestId":"11111111-1111-1111-1111-111111111111"}'
 
-# Todo listele
-curl -X GET http://localhost:5158/api/todo \
+# Todo listele (sayfalı — ilk sayfa, 10 kayıt)
+curl -X GET "http://localhost:5158/api/todo?pageNumber=1&pageSize=10" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
@@ -259,6 +271,7 @@ curl -X GET http://localhost:5158/api/todo \
 - Düzenle/sil işlemleri için mat-icon kullanılır
 - Yavaş ağda çift tıklamaya karşı koruma: sunucu tarafında `requestId` idempotency (Create), istemci tarafında `saving`/`deletingIds` kilitleri
 - Son tarih (DueDate) — todo'lara opsiyonel son tarih eklenebilir, listede vurgulanır
+- Sayfalama (pagination) — todo listesi `pageNumber`/`pageSize` ile sayfalanır; sunucu `Skip/Take` ve `CreatedAt` sıralamasıyla ilgili dilimi döner, ayrı bir `GetTodosPagedQuery`/handler CQRS akışında çalışır. Frontend, dönen `PagedResult` meta bilgisiyle (toplam sayfa, önceki/sonraki var mı) ileri-geri butonlu bir sayfa çubuğu gösterir; sınır sayfalarda ilgili buton pasifleşir
 
 **Mail**
 - Kayıt olunca uygulama adı ve logosunu içeren "Do'ty uygulamasına hoş geldiniz" konulu HTML mail

@@ -5,6 +5,7 @@ namespace TodoApi.Domain.Interfaces;
 public interface ITodoRepository
 {
     Task<List<TodoItem>> GetAllAsync();
+    Task<(List<TodoItem> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize);
     Task<TodoItem?> GetByIdAsync(Guid id);
     Task AddAsync(TodoItem item);
     void Update(TodoItem item);

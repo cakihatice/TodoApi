@@ -47,7 +47,9 @@ builder.Services.AddScoped<IEmailValidator, EmailValidator>();
 // CQRS Query Handlers
 builder.Services.AddScoped<IQueryHandler<GetAllTodosQuery, List<TodoDto>>, GetAllTodosQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<GetTodoByIdQuery, TodoDto?>, GetTodoByIdQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetTodosPagedQuery, PagedResult<TodoDto>>, GetTodosPagedQueryHandler>(); 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+
 {
     // İstemcide SHA-256 hash gönderiliyor; sunucu sadece hash'i görür.
     // Asıl şifre gücü register formunda doğrulanıyor.

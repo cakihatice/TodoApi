@@ -47,5 +47,29 @@
         <li class="empty">Henüz todo yok. "Ekle" ile başla.</li>
       }
     </ul>
+    @if (totalPages() > 0) {
+      <div class="pagination">
+        <button
+          mat-icon-button
+          (click)="previousPage()"
+          [disabled]="!hasPreviousPage()"
+          aria-label="Önceki sayfa">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <span class="page-info">
+          Sayfa {{ pageNumber() }} / {{ totalPages() }}
+          <small>({{ totalCount() }} kayıt)</small>
+        </span>
+
+        <button
+          mat-icon-button
+          (click)="nextPage()"
+          [disabled]="!hasNextPage()"
+          aria-label="Sonraki sayfa">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    }
   </div>
 </div>

@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { Todo, TodoDto } from '../../services/todo';
+import { Todo, TodoDto, PagedResult } from '../../services/todo';
 import { Header } from '../../components/header/header';
 import { TodoDialog } from '../../components/todo-dialog/todo-dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -22,16 +22,39 @@ export class TodoList implements OnInit {
   todos = signal<TodoDto[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
+  pageNumber = signal(1);
+  pageSize = signal(10);
+  totalCount = signal(0);
+  totalPages = signal(0);
+  hasPreviousPage = signal(false);
+  hasNextPage = signal(false);
 
   ngOnInit() {
     this.loadTodos();
   }
+  nextPage() {
+    if (this.hasNextPage()) {
+      this.pageNumber.update(p => p + 1);
+      this.loadTodos();
+    }
+  }
+
+  previousPage() {
+    if (this.hasPreviousPage()) {
+      this.pageNumber.update(p => p - 1);
+      this.loadTodos();
+    }
+  }
 
   loadTodos() {
     this.loading.set(true);
-    this.todoService.getAll().subscribe({
-      next: (todos) => {
-        this.todos.set(todos);
+    this.todoService.getPaged(this.pageNumber(), this.pageSize()).subscribe({
+      next: (result: PagedResult<TodoDto>) => {
+        this.todos.set(result.items);
+        this.totalCount.set(result.totalCount);
+        this.totalPages.set(result.totalPages);
+        this.hasPreviousPage.set(result.hasPreviousPage);
+        this.hasNextPage.set(result.hasNextPage);
         this.error.set(null);
         this.loading.set(false);
       },

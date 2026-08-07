@@ -264,4 +264,23 @@
   .dates {
     font-size: 11px;
   }
+  .pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.page-info {
+  font-size: 14px;
+  color: #333;
+
+  small {
+    color: #999;
+    margin-left: 4px;
+  }
+}
 }

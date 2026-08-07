@@ -17,27 +17,23 @@ public class TodoController : ControllerBase
     private readonly ICommandHandler<DeleteTodoCommand, bool> _deleteHandler;
     private readonly IQueryHandler<GetAllTodosQuery, List<TodoDto>> _getAllHandler;
     private readonly IQueryHandler<GetTodoByIdQuery, TodoDto?> _getByIdHandler;
-
+    private readonly IQueryHandler<GetTodosPagedQuery, PagedResult<TodoDto>> _getPagedHandler;
     public TodoController(
         ICommandHandler<CreateTodoCommand, Guid> createHandler,
         ICommandHandler<UpdateTodoCommand, bool> updateHandler,
         ICommandHandler<DeleteTodoCommand, bool> deleteHandler,
         IQueryHandler<GetAllTodosQuery, List<TodoDto>> getAllHandler,
+        IQueryHandler<GetTodosPagedQuery, PagedResult<TodoDto>> getPagedHandler,
         IQueryHandler<GetTodoByIdQuery, TodoDto?> getByIdHandler)
     {
         _createHandler = createHandler;
         _updateHandler = updateHandler;
         _deleteHandler = deleteHandler;
         _getAllHandler = getAllHandler;
+        _getPagedHandler = getPagedHandler;
         _getByIdHandler = getByIdHandler;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<List<TodoDto>>> GetAll()
-    {
-        var result = await _getAllHandler.Handle(new GetAllTodosQuery());
-        return Ok(result);
-    }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoDto>> GetById(Guid id)
@@ -66,5 +62,16 @@ public class TodoController : ControllerBase
     {
         var success = await _deleteHandler.Handle(new DeleteTodoCommand(id));
         return success ? NoContent() : NotFound();
+    }
+    [HttpGet]
+    public async Task<ActionResult<PagedResult<TodoDto>>> GetAll(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1 || pageSize > 100) pageSize = 10;
+
+        var result = await _getPagedHandler.Handle(new GetTodosPagedQuery(pageNumber, pageSize));
+        return Ok(result);
     }
 }
