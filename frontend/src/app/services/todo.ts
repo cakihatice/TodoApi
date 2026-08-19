@@ -2,39 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { TodoDto, CreateTodoRequest, UpdateTodoRequest } from '../interfaces/todo.interface';
+import { PagedResult } from '../interfaces/paged-result.interface';
 
-export interface TodoDto {
-  id: string;
-  title: string;
-  description: string | null;
-  isCompleted: boolean;
-  createdAt: string;
-  dueDate: string | null;
-}
-
-export interface CreateTodoRequest {
-  title: string;
-  description: string | null;
-  dueDate: string | null;
-  requestId: string;
-}
-
-export interface UpdateTodoRequest {
-  id: string;
-  title: string;
-  description: string | null;
-  isCompleted: boolean;
-  dueDate: string | null;
-}
-export interface PagedResult<T> {
-  items: T[];
-  pageNumber: number;
-  pageSize: number;
-  totalCount: number;
-  totalPages: number;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
-}
+// Component'lerin eski import yolları bozulmasın diye re-export
+export type { TodoDto, CreateTodoRequest, UpdateTodoRequest } from '../interfaces/todo.interface';
+export type { PagedResult } from '../interfaces/paged-result.interface';
 
 @Injectable({ providedIn: 'root' })
 export class Todo {

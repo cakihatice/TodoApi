@@ -155,6 +155,17 @@ ng serve
 
 > **Mail testi:** Gerçek SMTP bağlı olmadığı için mailler (hoşgeldin + doğrulama linki) backend terminaline `📧 [SAHTE MAIL]` log'u olarak düşer. Doğrulama linkini log'dan kopyalayıp tarayıcıya yapıştırarak e-postayı doğrulayabilirsin. İleride `LoggingEmailSender` yerine gerçek bir `IEmailSender` implementasyonu (Gmail SMTP / SendGrid) kaydedilerek mailler gerçekten gönderilir.
 
+## Ekran Görüntüleri
+
+### Giriş Ekranı
+![Login](./docs/screenshots/login.png)
+
+### Todo Listesi
+![Todos](./docs/screenshots/todos.png)
+
+### Todo Ekleme
+![Todo Dialog](./docs/screenshots/todo-dialog.png)
+
 ## API Endpointleri
 
 Tüm todo ve profil endpoint'leri `Authorization: Bearer <token>` header'ı gerektirir.
